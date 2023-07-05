@@ -1,3 +1,6 @@
+import os
+from dbManager import DB
+
 def print_mainmemu():
     print('------------------------------')
     print('   도서관 관리 시스템 메인 메뉴')
@@ -13,16 +16,14 @@ def print_mainmemu():
 def main():
     print_mainmemu()
     print('-> 메뉴 번호 선택 : ', end='')
-    try:
-        user_select = int(input())
-    except ValueError:
-        print('------------------------------')
-        print('올바른 값을 입력해주세요.')
-        main()
+    user_select = int(input())
     print('------------------------------')
 
     if user_select == 1:
-        pass
+        DB.cur.execute("SELECT * FROM Books;")
+        rows = DB.cur.fetchall()
+        for row in rows:
+            print(row)
     elif user_select == 2:
         pass
     elif user_select == 3:
