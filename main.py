@@ -14,6 +14,30 @@ def print_mainmemu():
     print('6. 종료')
     print('------------------------------------------------------------')
 
+def book_search():
+    os.system('cls')
+    print('------------------------------------------------------------')
+    print('                      도서 정보 조회 메뉴')
+    print('------------------------------------------------------------')
+    find = input('검색할 책의 제목 혹은 ID를 입력해주세요 : ')
+    try:  # 입력한 값이 int로 변환될 수 있다면(id를 입력했다면) id로 검색, 변환될 수 없다면(책 제목을 입력했다면) 제목으로 검색
+        int(find)
+        DB.cur.execute(f"SELECT * FROM Books WHERE id='{find}';")
+    except ValueError:
+        DB.cur.execute(f"SELECT * FROM Books WHERE title='{find}';")
+    print('ID | 책 제목 | 저자 | 출판사 | 대출 가능 여부')
+    rows = DB.cur.fetchall()
+    for row in rows:
+        # row는 튜플 형태로 id, 책제목, 저자, 출판사, 대출 가능여부 순서로 값을 저장함
+        print(row[0], '|', row[1], '|', row[2], '|', row[3], '|', row[4])
+    repeat = input('계속 검색하시겠습니까? (y/n) : ')
+    if repeat == 'y':
+        book_search()
+    elif repeat == 'n':
+        main()
+    else:
+        print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
+        main()
 
 def main():
     print_mainmemu()
@@ -22,24 +46,8 @@ def main():
     print('------------------------------------------------------------')
 
     if user_select == 1:  # 도서 정보 조회
-        os.system('cls')
-        print('------------------------------------------------------------')
-        print('                      도서 정보 조회 메뉴')
-        print('------------------------------------------------------------')
-        find = input('검색할 책의 제목 혹은 ID를 입력해주세요 : ')
-        try:
-            int(find)
-            DB.cur.execute(f"SELECT * FROM Books WHERE id='{find}';")
-        except ValueError:
-            DB.cur.execute(f"SELECT * FROM Books WHERE title='{find}';")
-        print('ID | 책 제목 | 저자 | 출판사 | 대출 가능 여부')
-        rows = DB.cur.fetchall()
-        for row in rows:
-            # row는 튜플 형태로 id, 책제목, 저자, 출판사, 대출 가능여부 순서로 값을 저장함
-            print(row[0], '|', row[1], '|', row[2], '|', row[3], '|', row[4])
-
-        main()
-    elif user_select == 2:
+        book_search()
+    elif user_select == 2: # 도서 대출
         pass
     elif user_select == 3:
         pass
