@@ -39,6 +39,24 @@ def book_search():
         print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
         main()
 
+def book_insert():
+    os.system('cls')
+    print('------------------------------------------------------------')
+    print('                      도서 정보 입력 메뉴')
+    print('------------------------------------------------------------')
+    title = input('추가할 도서 제목 : ')
+    author = input('추가할 도서 저자 : ')
+    pub = input('추가할 도서 출판사 : ')
+    DB.cur.execute(f"INSERT INTO Books (title, author, publisher) VALUES ('{title}', '{author}', '{pub}');")
+    DB.conn.commit()
+    repeat = input('계속 입력하시겠습니까? (y/n) : ')
+    if repeat == 'y':
+        book_insert()
+    elif repeat == 'n':
+        main()
+    else:
+        print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
+        main()
 def main():
     print_mainmemu()
     print('-> 메뉴 번호 선택 : ', end='')
@@ -54,16 +72,7 @@ def main():
     elif user_select == 4:
         pass
     elif user_select == 5: # 도서 정보 입력
-        os.system('cls')
-        print('------------------------------------------------------------')
-        print('                      도서 정보 입력 메뉴')
-        print('------------------------------------------------------------')
-        title = input('추가할 도서 제목 : ')
-        author = input('추가할 도서 저자 : ')
-        pub = input('추가할 도서 출판사 : ')
-        DB.cur.execute(f"INSERT INTO Books (title, author, publisher) VALUES ('{title}', '{author}', '{pub}');")
-        DB.conn.commit()
-        main()
+        book_insert()
     elif user_select == 6:
         DB.conn.close()
         DB.cur.close()
