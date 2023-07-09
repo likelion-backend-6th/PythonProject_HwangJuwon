@@ -26,8 +26,13 @@ def main():
         print('------------------------------------------------------------')
         print('                      도서 정보 조회 메뉴')
         print('------------------------------------------------------------')
+        find = input('검색할 책의 제목 혹은 ID를 입력해주세요 : ')
+        try:
+            int(find)
+            DB.cur.execute(f"SELECT * FROM Books WHERE id='{find}';")
+        except ValueError:
+            DB.cur.execute(f"SELECT * FROM Books WHERE title='{find}';")
         print('ID | 책 제목 | 저자 | 출판사 | 대출 가능 여부')
-        DB.cur.execute("SELECT * FROM Books;")
         rows = DB.cur.fetchall()
         for row in rows:
             # row는 튜플 형태로 id, 책제목, 저자, 출판사, 대출 가능여부 순서로 값을 저장함
