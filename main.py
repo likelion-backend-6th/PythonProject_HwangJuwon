@@ -40,6 +40,7 @@ def book_search():
         print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
         main()
 
+
 def book_loan():
     os.system('cls')
     print('------------------------------------------------------------')
@@ -50,14 +51,33 @@ def book_loan():
         int(find)
         DB.cur.execute(f"SELECT loanable FROM books WHERE id = {find}")
         loan = DB.cur.fetchone()
-        if loan[0]:
+        if loan[0]:  # fetch는 튜플 형식으로 값을 가져오기 때문에 0번 인덱스를 불러와야 True 혹은 False가 출력됨
             DB.cur.execute(f"INSERT INTO loans (book_id, loan_date) VALUES ({find}, cast(now() as date));"
                            f"UPDATE books SET loanable = FALSE WHERE id = {find};")
+            DB.conn.commit()
             print(f"{find}번 책을 대출했습니다.")
         else:
             print('이미 대출중인 책입니다.')
     except ValueError:
-        DB.cur.execute(f"INSERT INTO loans (book_id, loan_date) VALUES ({find}, cast(now() as date));")
+        DB.cur.execute(f"SELECT loanable, id FROM books WHERE title = '{find}';")
+        loan = DB.cur.fetchone()
+        if loan[0]:
+            book_id = loan[1]
+            DB.cur.execute(f"INSERT INTO loans (book_id, loan_date) VALUES ({book_id}, cast(now() as date));"
+                           f"UPDATE books SET loanable = FALSE WHERE id = {book_id};")
+            DB.conn.commit()
+            print(f"{find} 책을 대출했습니다.")
+        else:
+            print('이미 대출중인 책입니다.')
+    repeat = input('계속 대출하시겠습니까? (y/n) : ')
+    if repeat == 'y':
+        book_loan()
+    elif repeat == 'n':
+        main()
+    else:
+        print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
+        main()
+
 
 def book_insert():
     os.system('cls')
