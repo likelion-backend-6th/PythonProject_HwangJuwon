@@ -14,6 +14,7 @@ def print_mainmemu():
     print('6. 종료')
     print('------------------------------------------------------------')
 
+
 def book_search():
     os.system('cls')
     print('------------------------------------------------------------')
@@ -39,6 +40,25 @@ def book_search():
         print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
         main()
 
+def book_loan():
+    os.system('cls')
+    print('------------------------------------------------------------')
+    print('                      도서 대출 메뉴')
+    print('------------------------------------------------------------')
+    find = input('대여할 책의 제목 혹은 ID를 입력해주세요 : ')
+    try:  # 입력한 값이 int로 변환될 수 있다면(id를 입력했다면) id로 검색, 변환될 수 없다면(책 제목을 입력했다면) 제목으로 검색
+        int(find)
+        DB.cur.execute(f"SELECT loanable FROM books WHERE id = {find}")
+        loan = DB.cur.fetchone()
+        if loan[0]:
+            DB.cur.execute(f"INSERT INTO loans (book_id, loan_date) VALUES ({find}, cast(now() as date));"
+                           f"UPDATE books SET loanable = FALSE WHERE id = {find};")
+            print(f"{find}번 책을 대출했습니다.")
+        else:
+            print('이미 대출중인 책입니다.')
+    except ValueError:
+        DB.cur.execute(f"INSERT INTO loans (book_id, loan_date) VALUES ({find}, cast(now() as date));")
+
 def book_insert():
     os.system('cls')
     print('------------------------------------------------------------')
@@ -57,6 +77,8 @@ def book_insert():
     else:
         print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
         main()
+
+
 def main():
     print_mainmemu()
     print('-> 메뉴 번호 선택 : ', end='')
@@ -65,13 +87,13 @@ def main():
 
     if user_select == 1:  # 도서 정보 조회
         book_search()
-    elif user_select == 2: # 도서 대출
+    elif user_select == 2:  # 도서 대출
+        book_loan()
+    elif user_select == 3:  # 도서 반납
         pass
-    elif user_select == 3:
+    elif user_select == 4:  # 대출 정보 조회
         pass
-    elif user_select == 4:
-        pass
-    elif user_select == 5: # 도서 정보 입력
+    elif user_select == 5:  # 도서 정보 입력
         book_insert()
     elif user_select == 6:
         DB.conn.close()
