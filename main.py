@@ -78,6 +78,7 @@ def book_loan():
         print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
         main()
 
+
 def book_return():
     os.system('cls')
     print('------------------------------------------------------------')
@@ -97,7 +98,8 @@ def book_return():
         else:
             print('대출중인 책이 아닙니다.')
     except ValueError:
-        DB.cur.execute(f"SELECT b.loanable, b.id, l.loan_id FROM books b, loans l WHERE b.id=l.book_id AND title = '{find}';")
+        DB.cur.execute(
+            f"SELECT b.loanable, b.id, l.loan_id FROM books b, loans l WHERE b.id=l.book_id AND title = '{find}';")
         loan = DB.cur.fetchone()
         if not loan[0]:
             book_id = loan[1]
@@ -109,14 +111,20 @@ def book_return():
         else:
             print('대출중인 책이 아닙니다.')
 
+
 def loan_search():
     os.system('cls')
     print('------------------------------------------------------------')
     print('                      대출 정보 메뉴')
     print('------------------------------------------------------------')
-    print('ID  |  책 제목  |  저자  |  출판사  |  대출일자  |  반납일자')
+    print('책 번호 |  책 제목  |  저자  |  출판사  |  대출일자  |  반납일자')
     DB.cur.execute("SELECT b.id, b.title, b.author, b.publisher, l.loan_date, l.return_date FROM books b, "
-                   "loans l WHERE b.id=l.book_id")
+                   "loans l WHERE b.id=l.book_id ORDER BY l.loan_date")
+    rows = DB.cur.fetchall()
+
+    for row in rows:
+        print('%6d' % row[0], '|', row[1], '|', row[2], '|', row[3], '|', row[4], '|', row[5])
+
 
 def book_insert():
     os.system('cls')
