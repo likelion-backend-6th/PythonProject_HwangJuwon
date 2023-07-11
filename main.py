@@ -26,10 +26,17 @@ def book_search():
         DB.cur.execute(f"SELECT * FROM Books WHERE id='{find}';")
     except ValueError:
         DB.cur.execute(f"SELECT * FROM Books WHERE title='{find}';")
-    print('ID  |  책 제목  |  저자  |  출판사  |  대출 가능 여부')
     row = DB.cur.fetchone()
-    # row는 튜플 형태로 id, 책제목, 저자, 출판사, 대출 가능여부 순서로 값을 저장함
-    print(row[0], '|', row[1], '|', row[2], '|', row[3], '|', row[4])
+    if not row[4]:  # 대출 가능 여부가 False라면
+        print('책 번호 |  책 제목  |  저자  |  출판사  |  대출 가능 여부 | 대출일자')
+        print('%6d' % row[0], '|', row[1], '|', row[2], '|', row[3], '|', row[4], end=' ')
+        book_id = row[0]
+        DB.cur.execute(f"SELECT loan_date FROM loans WHERE book_id={book_id};")
+        loan_date = DB.cur.fetchone()
+        print('|', loan_date[0])
+    else:
+        print('책 번호 |  책 제목  |  저자  |  출판사  |  대출 가능 여부')
+        print('%6d' % row[0], '|', row[1], '|', row[2], '|', row[3], '|', row[4])
     repeat = input('계속 검색하시겠습니까? (y/n) : ')
     if repeat == 'y':
         book_search()
@@ -124,6 +131,7 @@ def loan_search():
         print('%6d' % row[0], '|', row[1], '|', row[2], '|', row[3], '|', row[4], '|', row[5])
 
     main()
+
 
 def book_insert():
     os.system('cls')
