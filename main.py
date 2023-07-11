@@ -26,7 +26,7 @@ def book_search():
         DB.cur.execute(f"SELECT * FROM Books WHERE id='{find}';")
     except ValueError:
         DB.cur.execute(f"SELECT * FROM Books WHERE title='{find}';")
-    print('ID | 책 제목 | 저자 | 출판사 | 대출 가능 여부')
+    print('ID  |  책 제목  |  저자  |  출판사  |  대출 가능 여부')
     rows = DB.cur.fetchall()
     for row in rows:
         # row는 튜플 형태로 id, 책제목, 저자, 출판사, 대출 가능여부 순서로 값을 저장함
@@ -110,8 +110,13 @@ def book_return():
             print('대출중인 책이 아닙니다.')
 
 def loan_search():
-    # select l.loan_id, l.book_id, b.title, l.loan_date from loans l, books b where l.book_id=b.id;
-    pass
+    os.system('cls')
+    print('------------------------------------------------------------')
+    print('                      대출 정보 메뉴')
+    print('------------------------------------------------------------')
+    print('ID  |  책 제목  |  저자  |  출판사  |  대출일자  |  반납일자')
+    DB.cur.execute("SELECT b.id, b.title, b.author, b.publisher, l.loan_date, l.return_date FROM books b, "
+                   "loans l WHERE b.id=l.book_id")
 
 def book_insert():
     os.system('cls')
