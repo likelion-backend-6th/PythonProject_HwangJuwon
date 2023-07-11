@@ -47,7 +47,7 @@ def book_loan():
     print('                      도서 대출 메뉴')
     print('------------------------------------------------------------')
     find = input('대여할 책의 제목 혹은 ID를 입력해주세요 : ')
-    try:  # 입력한 값이 int로 변환될 수 있다면(id를 입력했다면) id로 검색, 변환될 수 없다면(책 제목을 입력했다면) 제목으로 검색
+    try:
         int(find)
         DB.cur.execute(f"SELECT loanable FROM books WHERE id = {find}")
         loan = DB.cur.fetchone()
@@ -78,6 +78,40 @@ def book_loan():
         print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
         main()
 
+def book_return():
+    os.system('cls')
+    print('------------------------------------------------------------')
+    print('                      도서 반납 메뉴')
+    print('------------------------------------------------------------')
+    find = input('반납할 책의 제목 혹은 ID를 입력해주세요 : ')
+    try:
+        int(find)
+        DB.cur.execute(f"SELECT b.loanable, l.loan_id FROM books b, loans l WHERE b.id=l.book_id AND id = {find};")
+        loan = DB.cur.fetchone()
+        if not loan[0]:
+            loan_id = loan[1]
+            DB.cur.execute(f"UPDATE books SET loanable = TRUE WHERE id = {find};"
+                           f"UPDATE loans SET return_date = cast(now() as date) WHERE loan_id = {loan_id};")
+            DB.conn.commit()
+            print(f"{find}번 책을 반납했습니다.")
+        else:
+            print('대출중인 책이 아닙니다.')
+    except ValueError:
+        DB.cur.execute(f"SELECT b.loanable, b.id, l.loan_id FROM books b, loans l WHERE b.id=l.book_id AND title = '{find}';")
+        loan = DB.cur.fetchone()
+        if not loan[0]:
+            book_id = loan[1]
+            loan_id = loan[2]
+            DB.cur.execute(f"UPDATE books SET loanable = TRUE WHERE id = {book_id};"
+                           f"UPDATE loans SET return_date = cast(now() as date) WHERE loan_id = {loan_id};")
+            DB.conn.commit()
+            print(f"{find} 책을 반납했습니다.")
+        else:
+            print('대출중인 책이 아닙니다.')
+
+def loan_search():
+    # select l.loan_id, l.book_id, b.title, l.loan_date from loans l, books b where l.book_id=b.id;
+    pass
 
 def book_insert():
     os.system('cls')
@@ -110,9 +144,9 @@ def main():
     elif user_select == 2:  # 도서 대출
         book_loan()
     elif user_select == 3:  # 도서 반납
-        pass
+        book_return()
     elif user_select == 4:  # 대출 정보 조회
-        pass
+        loan_search()
     elif user_select == 5:  # 도서 정보 입력
         book_insert()
     elif user_select == 6:
