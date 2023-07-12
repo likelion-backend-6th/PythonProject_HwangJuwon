@@ -156,10 +156,13 @@ def book_insert():
     elif select == 2:
         import csv
         file = open('book_test.csv', 'r')
-        render = csv.reader(file)
-
-        for line in render:
-            print(line)
+        reader = csv.reader(file)
+        for i, line in enumerate(reader):
+            if i > 0:
+                DB.cur.execute(
+                    f"INSERT INTO Books (title, author, publisher) VALUES ('{line[0]}', '{line[1]}', '{line[2]}');")
+                print(f"{line[0]} 책을 입력했습니다.")
+                DB.conn.commit()
         file.close()
     repeat = input('계속 입력하시겠습니까? (y/n) : ')
     if repeat == 'y':
