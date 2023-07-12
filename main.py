@@ -116,14 +116,6 @@ def book_return():
             print(f"{find} 책을 반납했습니다.")
         else:
             print('대출중인 책이 아닙니다.')
-    repeat = input('계속 반납하시겠습니까? (y/n) : ')
-    if repeat == 'y':
-        book_return()
-    elif repeat == 'n':
-        main()
-    else:
-        print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
-        main()
 
 
 def loan_search():
@@ -146,17 +138,11 @@ def book_insert():
     print('------------------------------------------------------------')
     print('                      도서 정보 입력 메뉴')
     print('------------------------------------------------------------')
-    select = int(input('직접 입력(1), 파일로 입력(2) : '))
-    if select == 1:
-        title = input('추가할 도서 제목 : ')
-        author = input('추가할 도서 저자 : ')
-        pub = input('추가할 도서 출판사 : ')
-        DB.cur.execute(f"INSERT INTO Books (title, author, publisher) VALUES ('{title}', '{author}', '{pub}');")
-        DB.conn.commit()
-    elif select == 2:
-        import pandas as pd
-        rows = pd.read_csv('book_test.csv')
-        rows.info()
+    title = input('추가할 도서 제목 : ')
+    author = input('추가할 도서 저자 : ')
+    pub = input('추가할 도서 출판사 : ')
+    DB.cur.execute(f"INSERT INTO Books (title, author, publisher) VALUES ('{title}', '{author}', '{pub}');")
+    DB.conn.commit()
     repeat = input('계속 입력하시겠습니까? (y/n) : ')
     if repeat == 'y':
         book_insert()
