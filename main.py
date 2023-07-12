@@ -146,11 +146,21 @@ def book_insert():
     print('------------------------------------------------------------')
     print('                      도서 정보 입력 메뉴')
     print('------------------------------------------------------------')
-    title = input('추가할 도서 제목 : ')
-    author = input('추가할 도서 저자 : ')
-    pub = input('추가할 도서 출판사 : ')
-    DB.cur.execute(f"INSERT INTO Books (title, author, publisher) VALUES ('{title}', '{author}', '{pub}');")
-    DB.conn.commit()
+    select = int(input('직접 입력(1), 파일로 입력(2) : '))
+    if select == 1:
+        title = input('추가할 도서 제목 : ')
+        author = input('추가할 도서 저자 : ')
+        pub = input('추가할 도서 출판사 : ')
+        DB.cur.execute(f"INSERT INTO Books (title, author, publisher) VALUES ('{title}', '{author}', '{pub}');")
+        DB.conn.commit()
+    elif select == 2:
+        import csv
+        file = open('book_test.csv', 'r')
+        render = csv.reader(file)
+
+        for line in render:
+            print(line)
+        file.close()
     repeat = input('계속 입력하시겠습니까? (y/n) : ')
     if repeat == 'y':
         book_insert()
