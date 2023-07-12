@@ -116,6 +116,14 @@ def book_return():
             print(f"{find} 책을 반납했습니다.")
         else:
             print('대출중인 책이 아닙니다.')
+        repeat = input('계속 입력하시겠습니까? (y/n) : ')
+        if repeat == 'y':
+            book_insert()
+        elif repeat == 'n':
+            main()
+        else:
+            print('잘못된 값이 입력되었습니다. 메인메뉴로 돌아갑니다.')
+            main()
 
 
 def loan_search():
